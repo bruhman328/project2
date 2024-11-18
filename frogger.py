@@ -10,9 +10,8 @@ JUMP = 'J'
 FROG = '\U0001318F'
 
 def frogger_game(file):
-    for i in range(file[0][1]):
-        file[2].append(' ')
-    file[2][len(file[2]) // 2] = FROG
+
+    pos_input = input('WASDJ')
     for i in file[0:2]:
         print(i)
     for i in file[2:]:
@@ -84,6 +83,10 @@ def select_game_file():
             board.append(new_row)
     else:
         return "Not a selection"
+
+    for i in range(board[0][1]):
+        board[2].append(' ')
+    board[2][len(board[2]) // 2] = FROG
 
     return board
 
