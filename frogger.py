@@ -8,66 +8,86 @@ DOWN = 'S'
 RIGHT = 'D'
 JUMP = 'J'
 FROG = '\U0001318F'
+
 def display_board(file):
     for i in file[2][::]:
         print(' '.join(i))
 
-def move(file, frog):
+
+def move(file, frog_pos):
+    direction = input('WASDJ')
+    x_pos = frog_pos[0]
+    y_pos = frog_pos[1]
+    new_x_pos = x_pos
+    new_y_pos = y_pos
+
+    if direction == UP:
+        if x_pos != 0 or file[x_pos - 1][y_pos] != 'X':
+            new_x -= 1
+        elif x_pos == 0 or file[x_pos - 1][y_pos] == 'X':
+            return 'You cant move up'
+    elif direction == DOWN:
+        if x_pos != 0 or file[x_pos - 1][y_pos] != 'X':
+            new_x -= 1
+        elif x_pos == 0 or file[x_pos - 1][y_pos] == 'X':
+            return 'You cant move up'
+    elif direction == LEFT:
+        new_y -= 1
+    elif direction == RIGHT:
+        new_y += 1
+    display_board(file)
     pos_input = input('WASDJ')
-    for i in range(file[2]):
-        for j in range(i):
-            if pos_input.upper() == 'W':
+    
+    for i in range(len(file[2]) - 1):
+        for j in range(len(file[i]) - 1):
+            if pos_input.upper() == UP:
                 if i == 0 or frog[i - 1][j] == 'X':  
                     return 'You cannot move up'
                 elif i != 0 or frog[i - 1][j] != 'X':
-                    return move(file, frog[i - 1][j])
+                    return frog[i - 1][j]
                 
-            if pos_input.upper() == 'A':
+            if pos_input.upper() == LEFT:
                 if j == 0 or frog[i][j - 1] == 'X':  
                     return 'You cannot move left'
                 elif i != 0 or frog[i][j - 1] != 'X':
-                    return move(file, frog[i][j - 1])
+                    return frog[i][j - 1]
                 
-            if pos_input.upper() == 'S':
+            if pos_input.upper() == DOWN:
                 if frog[i + 1][j] == 'X':  
                     return 'You cannot move down'
                 elif frog[i + 1][j] != 'X':
-                    return move(file, frog[i + 1][j])
+                    return frog[i + 1][j]
             
-            if pos_input.upper() == 'D':
+            if pos_input.upper() == RIGHT:
                 if j == (len(i) - 1) or frog[i][j + 1] == 'X':
                     return 'You cannot move right'
                 elif j != (len(i) - 1) or frog[i][j + 1] != 'X':
-                    return move(file, frog[i][j + 1])
-            if 'J' in pos_input.upper():
+                    return frog[i][j + 1]
+                
+            if JUMP in pos_input.upper():
                 if file[0][2] == 0:
                     return 'You cannot jump anymore'
                 elif file[0][2] != 0:
                     jump_input = pos_input.split()
-                    if int(jump_input[1]) > frog[i + 1]:
+                    if int(jump_input[1]) > (i + 1) or int(jump_input[1]) < (i - 1):
                         return 'You cannot jump that far'
+                    elif int(jump_input[1]) == (i + 1) or int(jump_input[1]) == (i - 1):
+                        file[0][2] -= 1
+                        return frog[int(jump_input[1])][int(jump_input[2])]
 
-                    
-
-                
-    
-    pos_input = input('WASDJ')
-
-    if pos_input.upper() == 'W':
-        if pos[]
-   
-    
-  
+            if i == len(file[2]):
+                return 'The frog has lived to see another day'
 
 
 def frogger_game(file):
-    pos_input = input('WASDJ')
     # for i in file[0:3]:
     #     print(i)
     
     # for i in file[2][::]:
     #     print(' '.join(i))
-    display_board(file)
+    frog = file[2][0][file[0][1] // 2]
+    while True:
+        move(file, frog)
      
 def select_game_file():
     print("""
@@ -121,7 +141,6 @@ def select_game_file():
             line1 = board_lines[1].split()
             lining1 = list(int(num) for num in line1)
             board.append(lining1)
-            # board.append([])
 
             for i in range(board[0][1]):
                 start.append('_')
