@@ -14,7 +14,10 @@ def display_board(file):
     for i in file[:]:
         print(i)
         print()
+def cars(file, speed):
+    display_board(file)
 
+    return file[2][speed:] + file[:speed]
 def get_board(file):
     return file[2]
 
