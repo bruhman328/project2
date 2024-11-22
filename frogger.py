@@ -11,83 +11,69 @@ FROG = '\U0001318F'
 
 def display_board(file):
     for i in file[2][::]:
-        print(' '.join(i))
+        print(i)
+        print()
+    
 
+def cars(file, speed):
+    display_board(file)
 
-def move(file, frog_pos):
+    return file[speed:] + file[:speed]
+    
+
+def move(file, frog_pos, jumps):
     direction = input('WASDJ')
-    x_pos = frog_pos[0]
-    y_pos = frog_pos[1]
-    new_x_pos = x_pos
-    new_y_pos = y_pos
+    row_pos = frog_pos[0]
+    col_pos = frog_pos[1]
+    new_row_pos = row_pos
+    new_col_pos = col_pos
 
     if direction == UP:
-        if x_pos != 0 or file[x_pos - 1][y_pos] != 'X':
-            new_x -= 1
-        elif x_pos == 0 or file[x_pos - 1][y_pos] == 'X':
+        if row_pos != 0 or file[row_pos - 1][col_pos] != 'X':
+            new_row_pos -= 1
+        elif row_pos == 0 or file[row_pos - 1][col_pos] == 'X':
             return 'You cant move up'
     elif direction == DOWN:
-        if x_pos != 0 or file[x_pos - 1][y_pos] != 'X':
-            new_x -= 1
-        elif x_pos == 0 or file[x_pos - 1][y_pos] == 'X':
-            return 'You cant move up'
+        if file[row_pos + 1][col_pos] != 'X':
+            new_row_pos += 1
+        elif file[row_pos + 1][col_pos] == 'X':
+            return 'You cant move down'
     elif direction == LEFT:
-        new_y -= 1
+        if col_pos != 0 or file[row_pos][col_pos - 1] != 'X':
+            new_col_pos -= 1
+        elif col_pos == 0 or file[row_pos][col_pos - 1] == 'X':
+            return 'You cant move left'
     elif direction == RIGHT:
-        new_y += 1
-    display_board(file)
-    pos_input = input('WASDJ')
-    
-    for i in range(len(file[2]) - 1):
-        for j in range(len(file[i]) - 1):
-            if pos_input.upper() == UP:
-                if i == 0 or frog[i - 1][j] == 'X':  
-                    return 'You cannot move up'
-                elif i != 0 or frog[i - 1][j] != 'X':
-                    return frog[i - 1][j]
-                
-            if pos_input.upper() == LEFT:
-                if j == 0 or frog[i][j - 1] == 'X':  
-                    return 'You cannot move left'
-                elif i != 0 or frog[i][j - 1] != 'X':
-                    return frog[i][j - 1]
-                
-            if pos_input.upper() == DOWN:
-                if frog[i + 1][j] == 'X':  
-                    return 'You cannot move down'
-                elif frog[i + 1][j] != 'X':
-                    return frog[i + 1][j]
-            
-            if pos_input.upper() == RIGHT:
-                if j == (len(i) - 1) or frog[i][j + 1] == 'X':
-                    return 'You cannot move right'
-                elif j != (len(i) - 1) or frog[i][j + 1] != 'X':
-                    return frog[i][j + 1]
-                
-            if JUMP in pos_input.upper():
-                if file[0][2] == 0:
-                    return 'You cannot jump anymore'
-                elif file[0][2] != 0:
-                    jump_input = pos_input.split()
-                    if int(jump_input[1]) > (i + 1) or int(jump_input[1]) < (i - 1):
-                        return 'You cannot jump that far'
-                    elif int(jump_input[1]) == (i + 1) or int(jump_input[1]) == (i - 1):
-                        file[0][2] -= 1
-                        return frog[int(jump_input[1])][int(jump_input[2])]
+        if col_pos != file[0][1] or file[row_pos][col_pos + 1] != 'X':
+            new_col_pos += 1
+        elif col_pos == file[0][1] or file[row_pos][col_pos + 1] == 'X':
+            return 'You cant move right'
+    elif JUMP in direction:
+        splitted = direction.split()
+        if (int(splitted[1]) > (new_col_pos + 1) or int(splitted[1]) < (new_col_pos - 1)) and file[splitted[1][splitted[2]]] == 'X' or jumps == 0:
+            return 'You cant jump anymore'
+        elif (int(splitted[1]) == (new_col_pos + 1) or int(splitted[1]) == (new_col_pos - 1)) and file[splitted[1][splitted[2]]] != 'X' or jumps != 0:
+            new_row_pos = splitted[1]
+            new_col_pos = splitted[2]
+            jumps -= 1
+    if new_row_pos == (len(file[2]) - 1):
+        print('The frog has lived to see another day')
+        return False
+    frog_pos[0] = new_row_pos
+    frog_pos[1] = new_col_pos
+    return frog_pos
 
-            if i == len(file[2]):
-                return 'The frog has lived to see another day'
 
 
 def frogger_game(file):
-    # for i in file[0:3]:
-    #     print(i)
-    
-    # for i in file[2][::]:
-    #     print(' '.join(i))
+   
     frog = file[2][0][file[0][1] // 2]
+  
     while True:
-        move(file, frog)
+        move(cars(file, file[0][1]), frog, file[0][2])
+
+
+
      
 def select_game_file():
     print("""
@@ -115,15 +101,15 @@ def select_game_file():
             for i in range(board[0][1]):
                 start.append('_')
                 end.append('_')
-            if board[0][1] % 2 == 1:
-                start.append('_')
-                end.append('_')
-            elif board[0][1] % 2 == 0:
-                start.remove('_')
-                end.remove('_')
-            if board[0][1] == 3:
-                start.remove('_')
-                end.remove('_')
+            # if board[0][1] % 2 == 0:
+            #     start.append('_')
+            #     end.append('_')
+            # elif board[0][1] % 2 == 1:
+            #     start.remove('_')
+            #     end.remove('_')
+            # if board[0][1] == 3:
+            #     start.remove('_')
+            #     end.remove('_')
             new_row.append(start)
             for i in range(2, len(board_lines)):  
                 row = list(board_lines[i].strip())
@@ -145,15 +131,15 @@ def select_game_file():
             for i in range(board[0][1]):
                 start.append('_')
                 end.append('_')
-            if board[0][1] % 2 == 1:
-                start.append('_')
-                end.append('_')
-            elif board[0][1] % 2 == 0:
-                start.remove('_')
-                end.remove('_')
-            if board[0][1] == 3:
-                start.remove('_')
-                end.remove('_')
+            # if board[0][1] % 2 == 0:
+            #     start.append('_')
+            #     end.append('_')
+            # elif board[0][1] % 2 == 1:
+            #     start.remove('_')
+            #     end.remove('_')
+            # if board[0][1] == 3:
+            #     start.remove('_')
+            #     end.remove('_')
             new_row.append(start)
             for i in range(2, len(board_lines)):  
                 row = list(board_lines[i].strip())
@@ -177,15 +163,7 @@ def select_game_file():
             for i in range(board[0][1]):
                 start.append('_')
                 end.append('_')
-            if board[0][1] % 2 == 1:
-                start.append('_')
-                end.append('_')
-            elif board[0][1] % 2 == 0:
-                start.remove('_')
-                end.remove('_')
-            if board[0][1] == 3:
-                start.remove('_')
-                end.remove('_')
+            
             new_row.append(start)
             for i in range(2, len(board_lines)):  
                 row = list(board_lines[i].strip())
